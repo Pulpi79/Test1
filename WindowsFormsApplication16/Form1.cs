@@ -120,6 +120,13 @@ namespace WindowsFormsApplication16
                     indexList.Clear();
                 }
             }
+
+            PrepareStrings(buchungen);
+        }
+
+        private void PrepareStrings(Dictionary<string,List<string>> dictionary)
+        {
+
         }
     }
 }
