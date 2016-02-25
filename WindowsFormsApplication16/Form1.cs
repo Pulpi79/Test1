@@ -89,7 +89,7 @@ namespace WindowsFormsApplication16
                 //    // Read the first line from the file and write it the textbox.
                 //    tbResults.Text = reader.ReadLine();
                 //}
-                //fileStream.Close();
+                //fileStream.Close()
             }
 
         }
@@ -126,6 +126,20 @@ namespace WindowsFormsApplication16
 
         private void PrepareStrings(Dictionary<string,List<string>> dictionary)
         {
+            var betreff = string.Empty;
+            List<string> listToParse = new List<string>();
+            dictionary.TryGetValue("Buchung", out listToParse);
+
+            string firstChar = listToParse[0].ToString().Substring(0, 1);
+            string getTextFromFirstLine = Regex.Match(listToParse[0], @"([A-Z])\w+").Value;
+            var resultString = Regex.Match(listToParse[0], @"\d+\,\d+").Value;
+
+            var datum = Regex.Match(listToParse[7], @"\d{2}\.\d{2}").Value;
+
+            for (int i = 1; i <= 6; i++)
+            {
+                betreff += listToParse[i].ToString();
+            }
 
         }
     }
