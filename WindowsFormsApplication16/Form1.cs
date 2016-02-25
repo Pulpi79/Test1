@@ -128,9 +128,28 @@ namespace WindowsFormsApplication16
         {
             var betreff = string.Empty;
             List<string> listToParse = new List<string>();
-            dictionary.TryGetValue("Buchung 1", out listToParse);
+          
             Buchung buchung = new Buchung();
             Buchungen buchungen = new Buchungen();
+
+            foreach(var entry in dictionary)
+            {
+                dictionary.TryGetValue(entry.Key, out listToParse);
+
+                buchung.Vorzeichen = listToParse[0].Substring(0, 1);
+                buchung.BuchungsTyp = Regex.Match(listToParse[0], @"([A-Z])\w+").Value;
+                buchung.Betrag = Convert.ToDouble(Regex.Match(listToParse[0], @"\d+\,\d+").Value);
+
+                buchung.Datum = Convert.ToDateTime(Regex.Match(listToParse[7], @"\d{2}\.\d{2}").Value);
+
+                for (int i = 1; i <= 6; i++)
+                {
+                    betreff += listToParse[i].ToString();
+                }
+                buchung.Betreff = betreff;
+                buchungen.Add(buchung);
+                betreff = string.Empty;
+            }
 
             //string firstChar = listToParse[0].ToString().Substring(0, 1);
             //string getTextFromFirstLine = Regex.Match(listToParse[0], @"([A-Z])\w+").Value;
@@ -143,18 +162,7 @@ namespace WindowsFormsApplication16
             //    betreff += listToParse[i].ToString();
             //}
 
-            buchung.Vorzeichen = listToParse[0].ToString().Substring(0, 1);
-            buchung.BuchungsTyp = Regex.Match(listToParse[0], @"([A-Z])\w+").Value;
-            buchung.Betrag = Convert.ToDouble(Regex.Match(listToParse[0], @"\d+\,\d+").Value);
-
-            buchung.Datum = Convert.ToDateTime(Regex.Match(listToParse[7], @"\d{2}\.\d{2}").Value);
-
-            for (int i = 1; i <= 6; i++)
-            {
-                betreff += listToParse[i].ToString();
-            }
-            buchung.Betreff = betreff;
-            buchungen.Add(buchung);
+           
             
 
         }
