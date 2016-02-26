@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -22,45 +23,102 @@ namespace WindowsFormsApplication16
             InitializeComponent();
         }
 
+        private static int CalculateCheckNumber(string text)
+        {
+            int checkNumber = 0;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                int digit = int.Parse(text[i].ToString(), CultureInfo.InvariantCulture);
+                int mul = (i % 2 == 0 ? 1 : 3);
+                int add = digit * mul;
+                checkNumber = checkNumber + add;
+            }
+
+            checkNumber = (10 - checkNumber % 10) % 10;
+
+            return checkNumber;
+        }
+
+        public static string IntToJournalSatzNummer(int i)
+        {
+            return i.ToString("D4", CultureInfo.InvariantCulture);
+        }
+
+        public static string IntToJournalNummer(int i)
+        {
+            return i.ToString("D5", CultureInfo.InvariantCulture);
+        }
+
+        public static string DateToDayMonthYear(DateTime dateTime)
+        {
+            return dateTime.ToString("ddMMyy", CultureInfo.InvariantCulture);
+        }
+
+        public static string IntToString(int i)
+        {
+            return i.ToString(CultureInfo.InvariantCulture);
+        }
+
+        public static string GetEanCode19(string cashBoxNumber, DateTime dateTime, int journalsatzNummer)
+        {
+            string actualDate = DateToDayMonthYear(dateTime);
+            string paddedJournalsatzNummer = IntToJournalSatzNummer(journalsatzNummer);
+            string eanCode19 = cashBoxNumber + actualDate + paddedJournalsatzNummer;
+                    //220216      401198
+
+            int checkNumber = CalculateCheckNumber(eanCode19);
+
+            eanCode19 += IntToString(checkNumber);
+
+            return eanCode19;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
-            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-            saveFileDialog1.Filter = "Rar Files (.rar)|*.rar|All Files (*.*)|*.*";
-            saveFileDialog1.Title = "Bitte Speichern";
-            saveFileDialog1.ShowDialog();
+            DateTime a = Convert.ToDateTime("22.02.16");
+            string eanCode =GetEanCode19("70000104",a, 174);
+            int length = eanCode.Length;
+            string ab = "70000104220216401198";
+           //string a= IntToJournalSatzNummer(8);
+        /*
+        SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+        saveFileDialog1.Filter = "Rar Files (.rar)|*.rar|All Files (*.*)|*.*";
+        saveFileDialog1.Title = "Bitte Speichern";
+        saveFileDialog1.ShowDialog();
 
-            // If the file name is not an empty string open it for saving.
-            if (saveFileDialog1.FileName != "")
-            {
+        // If the file name is not an empty string open it for saving.
+        if (saveFileDialog1.FileName != "")
+        {
 
-                File.Copy(saveFileDialog1.FileName, Path.Combine(@"C:\", saveFileDialog1.FileName));
-                // Saves the Image via a FileStream created by the OpenFile method.
-                /*   System.IO.FileStream fs =
-                      (System.IO.FileStream)saveFileDialog1.OpenFile();
-                   // Saves the Image in the appropriate ImageFormat based upon the
-                   // File type selected in the dialog box.
-                   // NOTE that the FilterIndex property is one-based.
-                   switch (saveFileDialog1.FilterIndex)
-                   {
-                       case 1:
-                           this.button1.Image.Save(fs,
-                              System.Drawing.Imaging.ImageFormat.Jpeg);
-                           break;
+            File.Copy(saveFileDialog1.FileName, Path.Combine(@"C:\", saveFileDialog1.FileName));
+            // Saves the Image via a FileStream created by the OpenFile method.
+            /*   System.IO.FileStream fs =
+                  (System.IO.FileStream)saveFileDialog1.OpenFile();
+               // Saves the Image in the appropriate ImageFormat based upon the
+               // File type selected in the dialog box.
+               // NOTE that the FilterIndex property is one-based.
+               switch (saveFileDialog1.FilterIndex)
+               {
+                   case 1:
+                       this.button1.Image.Save(fs,
+                          System.Drawing.Imaging.ImageFormat.Jpeg);
+                       break;
 
-                       case 2:
-                           this.button1.Image.Save(fs,
-                              System.Drawing.Imaging.ImageFormat.Bmp);
-                           break;
+                   case 2:
+                       this.button1.Image.Save(fs,
+                          System.Drawing.Imaging.ImageFormat.Bmp);
+                       break;
 
-                       case 3:
-                           this.button1.Image.Save(fs,
-                              System.Drawing.Imaging.ImageFormat.Gif);
-                           break;
-                   }
+                   case 3:
+                       this.button1.Image.Save(fs,
+                          System.Drawing.Imaging.ImageFormat.Gif);
+                       break;
+               }
 
-                   fs.Close();*/
-            }
-        }
+               fs.Close();*/
+        //}
+    }
 
         private void button2_Click(object sender, EventArgs e)
         {
